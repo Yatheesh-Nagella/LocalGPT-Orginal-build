@@ -71,4 +71,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'ynagella-cmsc5303-flutterdev.appspot.com',
     iosBundleId: 'edu.uco.ynagella.cmsc5303.lesson6',
   );
+
 }
