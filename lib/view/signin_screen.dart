@@ -13,6 +13,7 @@ class SignInScreen extends StatefulWidget {
 class SignInState extends State<SignInScreen> {
   late SigninModel model;
   late SignInScreenController con;
+  final formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -29,7 +30,43 @@ class SignInState extends State<SignInScreen> {
       appBar: AppBar(
         title: const Text("sign in"),
       ),
-      body: const Text('Sign In'),
+      body: model.inProgress
+          ? const Center(child: CircularProgressIndicator())
+          : signInForm(),
+    );
+  }
+
+  Widget signInForm() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SingleChildScrollView(
+        child: Form(
+          key: formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                decoration: const InputDecoration(
+                  hintText: "Email address",
+                ),
+                keyboardType: TextInputType.emailAddress,
+                autocorrect: false,
+                validator: null,
+                onSaved: null,
+              ),
+              TextFormField(
+                decoration: const InputDecoration(
+                  hintText: "Password",
+                ),
+                obscureText: true,
+                autocorrect: false,
+                validator: null,
+                onSaved: null,
+              ),
+              FilledButton.tonal(onPressed: (){}, child: const Text("Sign in")),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -17,6 +17,10 @@ class FirebaseTemplateApp extends StatelessWidget {
   @override
   Widget build(Object context) {
     return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blue,
+      ),
       initialRoute: StartDispatcher.routeName,
       routes: {
         StartDispatcher.routeName: (context) => const StartDispatcher(),
