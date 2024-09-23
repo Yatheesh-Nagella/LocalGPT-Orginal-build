@@ -50,8 +50,8 @@ class SignInState extends State<SignInScreen> {
                 ),
                 keyboardType: TextInputType.emailAddress,
                 autocorrect: false,
-                validator: null,
-                onSaved: null,
+                validator: model.validateEmail,
+                onSaved: model.saveEmail,
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -59,8 +59,8 @@ class SignInState extends State<SignInScreen> {
                 ),
                 obscureText: true,
                 autocorrect: false,
-                validator: null,
-                onSaved: null,
+                validator: model.validatePassword,
+                onSaved: model.savePassword,
               ),
               FilledButton.tonal(onPressed: (){}, child: const Text("Sign in")),
             ],
