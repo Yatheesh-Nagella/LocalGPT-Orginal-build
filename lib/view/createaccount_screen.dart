@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lesson6/controller/createaccount_controller.dart';
 import 'package:lesson6/model/createaccount_model.dart';
 
 class CreateAccountScreen extends StatefulWidget {
@@ -15,12 +16,16 @@ class CreateAccountScreen extends StatefulWidget {
 class CreateAccountState extends State<CreateAccountScreen> {
 
   late CreateAccountModel model;
+  late CreateAccountController con;
 
   @override
   void initState() {
     super.initState();
     model = CreateAccountModel();
+    con = CreateAccountController(this);
   }
+
+  void callSetState(fn) => setState(fn);
 
   @override
   Widget build(BuildContext context) {
