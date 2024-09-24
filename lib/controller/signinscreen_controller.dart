@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lesson6/controller/auth_controller.dart';
+import 'package:lesson6/view/createaccount_screen.dart';
 import 'package:lesson6/view/show_snackbar.dart';
 import 'package:lesson6/view/signin_screen.dart';
 
@@ -48,6 +49,6 @@ class SignInScreenController {
   }
 
   void gotoCreateAccount(){
-    
+    Navigator.pushNamed(state.context, CreateAccountScreen.routeName);
   }
 }
