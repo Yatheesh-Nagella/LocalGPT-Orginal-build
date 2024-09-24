@@ -11,10 +11,9 @@ class CreateAccountScreen extends StatefulWidget {
   State<StatefulWidget> createState() {
     return CreateAccountState();
   }
-} 
+}
 
 class CreateAccountState extends State<CreateAccountScreen> {
-
   late CreateAccountModel model;
   late CreateAccountController con;
 
@@ -33,9 +32,65 @@ class CreateAccountState extends State<CreateAccountScreen> {
       appBar: AppBar(
         title: const Text("Create Account"),
       ),
-      body: const Center(
-        child: Text("Create Account"),
-      ),
+      body: model.inProgress
+          ? const Center(child: CircularProgressIndicator())
+          : formView(context),
     );
+  }
+
+  Widget formView(BuildContext context) {
+    return SingleChildScrollView(
+        child: Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Form(
+        child: Column(
+          children: [
+            TextFormField(
+              decoration: const InputDecoration(
+                hintText: "Email address",
+              ),
+              initialValue: model.email,
+              keyboardType: TextInputType.emailAddress,
+              autocorrect: false,
+              validator: model.validateEmail,
+              onSaved: model.saveEmail,
+            ),
+            TextFormField(
+              decoration: const InputDecoration(
+                hintText: "Password",
+              ),
+              initialValue: model.password,
+              autocorrect: false,
+              validator: model.validatePassword,
+              onSaved: model.savePassword,
+              obscureText: !model.showPasswords,
+            ),
+            TextFormField(
+              decoration: const InputDecoration(
+                hintText: "Re-Enter password to confirm",
+              ),
+              initialValue: model.password,
+              autocorrect: false,
+              validator: model.validatePassword,
+              onSaved: model.savePasswordConfirm,
+              obscureText: !model.showPasswords,
+            ),
+            Row(
+              children: [
+                Checkbox(
+                  value: model.showPasswords,
+                  onChanged: con.showHidePasswords,
+                ),
+                const Text("Show passwords"),
+              ],
+            ),
+            FilledButton.tonal(
+              onPressed: con.createAccount,
+              child: const Text('Create Account'),
+            )
+          ],
+        ),
+      ),
+    ));
   }
 }
