@@ -16,6 +16,7 @@ class CreateAccountScreen extends StatefulWidget {
 class CreateAccountState extends State<CreateAccountScreen> {
   late CreateAccountModel model;
   late CreateAccountController con;
+  final formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -43,6 +44,7 @@ class CreateAccountState extends State<CreateAccountScreen> {
         child: Padding(
       padding: const EdgeInsets.all(12.0),
       child: Form(
+        key: formKey,
         child: Column(
           children: [
             TextFormField(
