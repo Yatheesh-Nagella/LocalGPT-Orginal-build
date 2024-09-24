@@ -64,7 +64,13 @@ class SignInState extends State<SignInScreen> {
               ),
               FilledButton.tonal(
                   onPressed: con.signIn, 
-                  child: const Text("Sign in")),
+                  child: const Text("Sign in")
+              ),
+              const SizedBox(height: 20.0),
+              OutlinedButton(
+                onPressed: con.gotoCreateAccount, 
+                child: const Text("No account yet? Sign up"),
+                ),
             ],
           ),
         ),

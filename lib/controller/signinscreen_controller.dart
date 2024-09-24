@@ -46,4 +46,8 @@ class SignInScreenController {
       }
     }
   }
+
+  void gotoCreateAccount(){
+    
+  }
 }
