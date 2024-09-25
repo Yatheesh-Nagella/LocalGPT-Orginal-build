@@ -3,38 +3,40 @@ import 'package:lesson6/controller/auth_controller.dart';
 import 'package:lesson6/controller/home_controller.dart';
 import 'package:lesson6/model/home_model.dart';
 
-class HomeScreen extends StatefulWidget{
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
   @override
-  State<StatefulWidget> createState(){
+  State<StatefulWidget> createState() {
     return HomeState();
   }
 }
 
-class HomeState extends State<HomeScreen>{
-
+class HomeState extends State<HomeScreen> {
   late HomeController con;
   late HomeModel model;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     con = HomeController(this);
     model = HomeModel(currentUser!);
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home"),
       ),
-      body: Text(model.user.email!),
+      body: PopScope(
+        canPop: false, // Disable back button
+        child: Text(model.user.email!),
+      ),
       drawer: drawerView(context),
     );
   }
 
-  Widget drawerView(BuildContext context){
+  Widget drawerView(BuildContext context) {
     return Drawer(
       child: ListView(
         children: [
