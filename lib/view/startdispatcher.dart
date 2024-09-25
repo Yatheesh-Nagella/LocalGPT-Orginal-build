@@ -16,7 +16,7 @@ class StartDispatcher extends StatelessWidget {
       initialData: null,
       builder: (BuildContext context, AsyncSnapshot snapshot){
         currentUser = snapshot.data;
-        return currentUser == null ? SignInScreen() : HomeScreen();
+        return currentUser == null ? const SignInScreen() : const HomeScreen();
       },
     );
   }
