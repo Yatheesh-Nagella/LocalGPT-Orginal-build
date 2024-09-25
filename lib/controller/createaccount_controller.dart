@@ -53,6 +53,13 @@ class CreateAccountController {
       }
     } on FirebaseAuthException catch (e) {
       print('=======> create account error: ${e.code} ${e.message}');
+      if (state.mounted) {
+        showSnackbar(
+          context: state.context,
+          message: '${e.code} ${e.message}',
+          seconds: 20,
+        );
+      }
       showSnackbar(
         context: state.context,
         message: '${e.code} ${e.message}',
@@ -65,7 +72,7 @@ class CreateAccountController {
         message: 'Create account error: $e',
         seconds: 20,
       );
-    } finally{
+    } finally {
       state.callSetState(() => state.model.inProgress = false);
     }
   }
