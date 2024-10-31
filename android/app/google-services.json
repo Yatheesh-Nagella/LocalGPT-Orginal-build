@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "1084017196899",
-    "project_id": "ynagella-cmsc5303-flutterdev",
-    "storage_bucket": "ynagella-cmsc5303-flutterdev.appspot.com"
+    "project_number": "690782193193",
+    "project_id": "localgpt-fa033",
+    "storage_bucket": "localgpt-fa033.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1084017196899:android:b0b5a9e94261424b7c1d56",
+        "mobilesdk_app_id": "1:690782193193:android:8578f16d348a71b379fe38",
         "android_client_info": {
-          "package_name": "edu.uco.ynagella.cmsc5303.lesson6"
+          "package_name": "edu.uco.ynagella"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB2UroHYx0aJi4thMumpgQ3P2O1Akh9hFI"
+          "current_key": "AIzaSyDwSXLMrcwdreYPeQ8851oDtDUSNHZtPxM"
         }
       ],
       "services": {
