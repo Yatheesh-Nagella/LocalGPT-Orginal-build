@@ -47,12 +47,13 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBRt0YvrfdBffRVCXE8Od3ftzzertIeYP0',
-    appId: '1:1084017196899:web:ca5da93f158741aa7c1d56',
-    messagingSenderId: '1084017196899',
-    projectId: 'ynagella-cmsc5303-flutterdev',
-    authDomain: 'ynagella-cmsc5303-flutterdev.firebaseapp.com',
-    storageBucket: 'ynagella-cmsc5303-flutterdev.appspot.com',
+    apiKey: 'AIzaSyAVcFeTw_NtZCtRSSI4F0uh-tUW7roHbtU',
+    appId: '1:690782193193:web:bf84a83455d6b09c79fe38',
+    messagingSenderId: '690782193193',
+    projectId: 'localgpt-fa033',
+    authDomain: 'localgpt-fa033.firebaseapp.com',
+    storageBucket: 'localgpt-fa033.appspot.com',
+    measurementId: 'G-RL51V0FVCH',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
