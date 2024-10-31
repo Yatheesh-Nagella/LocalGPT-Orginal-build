@@ -5,7 +5,7 @@ import 'package:lesson6/view/startdispatcher.dart';
 import 'firebase_options.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized(); // ensures that the Firebase core is initialized before the app starts
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

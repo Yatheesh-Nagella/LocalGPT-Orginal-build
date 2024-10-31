@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:file_picker/file_picker.dart';
 
 class StudentpageScreen extends StatefulWidget {
   const StudentpageScreen({super.key});
@@ -26,18 +27,37 @@ class _StudentpageScreenState extends State<StudentpageScreen> {
       final response = await model.generateContent(content);
 
       setState(() {
-        // Add the response to conversation history
-        _conversationHistory.insert(0, "User: $prompt\nAI: ${response.text ?? 'No response received.'}");
-        
+        _conversationHistory.insert(
+            0, "User: $prompt\nAI: ${response.text ?? 'No response received.'}");
+
         // Keep only the last 10 entries
         if (_conversationHistory.length > 10) {
           _conversationHistory.removeLast();
         }
       });
     } else {
-      // Show a message if the search bar is empty
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please enter a prompt to search.")),
+      );
+    }
+  }
+
+  Future<void> _pickPdfFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (result != null) {
+      String filePath = result.files.single.path!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Selected file: ${result.files.single.name}")),
+      );
+      // Add any functionality here to process or upload the PDF file.
+    } else {
+      // User canceled the picker
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("No file selected.")),
       );
     }
   }
@@ -53,16 +73,23 @@ class _StudentpageScreenState extends State<StudentpageScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Enter prompt here',
-                border: OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () => _searchController.clear(),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter prompt here',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: _pickPdfFile,
+                  child: const Text("Upload PDF"),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             ElevatedButton(
