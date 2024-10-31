@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lesson6/controller/signinscreen_controller.dart';
 import 'package:lesson6/model/signin_model.dart';
+import 'package:lesson6/view/Studentpage_screen.dart';
+// Import the student page
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -70,7 +72,18 @@ class SignInState extends State<SignInScreen> {
               OutlinedButton(
                 onPressed: con.gotoCreateAccount, 
                 child: const Text("No account yet? Sign up"),
-                ),
+              ),
+              const SizedBox(height: 20.0),
+              // New button to navigate to Student Page
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => StudentpageScreen()),
+                  );
+                },
+                child: const Text("Go to Student Page"),
+              ),
             ],
           ),
         ),
