@@ -35,6 +35,8 @@ class _StudentpageScreenState extends State<StudentpageScreen> {
           _conversationHistory.removeLast();
         }
       });
+
+      _searchController.clear(); // Clear the search bar after search
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please enter a prompt to search.")),
@@ -82,7 +84,13 @@ class _StudentpageScreenState extends State<StudentpageScreen> {
                       hintText: 'Enter prompt here',
                       border: OutlineInputBorder(),
                     ),
+                    onSubmitted: (_) => _searchPrompt(), // Triggers search on Enter key
                   ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: _searchPrompt,
+                  child: const Text("Search"),
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
@@ -90,11 +98,6 @@ class _StudentpageScreenState extends State<StudentpageScreen> {
                   child: const Text("Upload PDF"),
                 ),
               ],
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: _searchPrompt,
-              child: const Text("Search"),
             ),
             const SizedBox(height: 20),
             // Show conversation history if there are any entries
