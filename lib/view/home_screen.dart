@@ -1,8 +1,12 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart'; // Import Syncfusion PDF package
 import 'package:lesson6/controller/auth_controller.dart';
 import 'package:lesson6/controller/home_controller.dart';
 import 'package:lesson6/model/home_model.dart';
-
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,6 +19,16 @@ class HomeScreen extends StatefulWidget {
 class HomeState extends State<HomeScreen> {
   late HomeController con;
   late HomeModel model;
+  Uint8List? fileBytes;
+  String? fileName;
+
+  // Controllers for form fields
+  final TextEditingController courseNumberController = TextEditingController();
+  String? selectedDepartment;
+  String? selectedCourseName;
+
+  // Validation Error Message
+  String? errorMessage;
 
   @override
   void initState() {
@@ -23,21 +37,208 @@ class HomeState extends State<HomeScreen> {
     model = HomeModel(currentUser!);
   }
 
+  // Department and course options
+  final Map<String, List<String>> departmentCourses = {
+    'Computer Science': ['Data Structures', 'Algorithms', 'AI and ML', 'Cyber Security'],
+    'Arts': ['Art History', 'Painting', 'Sculpture', 'Photography'],
+    'Music': ['Music Theory', 'Composition', 'Instrumental Performance', 'Voice'],
+    'Psychology': ['Intro to Psychology', 'Behavioral Science', 'Neuroscience', 'Cognitive Psychology']
+  };
+
+  Future<void> _pickPdfFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (result != null) {
+      setState(() {
+        fileBytes = result.files.single.bytes;
+        fileName = result.files.single.name;
+        errorMessage = null; // Clear error if a file is selected
+      });
+    } else {
+      setState(() {
+        errorMessage = "Please select a PDF file.";
+      });
+    }
+  }
+
+  Future<void> _uploadSyllabus() async {
+    if (selectedDepartment == null ||
+        courseNumberController.text.isEmpty ||
+        selectedCourseName == null ||
+        fileBytes == null) {
+      setState(() {
+        errorMessage = "All fields are required, and a PDF must be selected.";
+      });
+      return;
+    }
+
+    // Define storage reference and metadata
+    final storageRef = FirebaseStorage.instance
+        .ref()
+        .child('syllabi/$selectedDepartment/$fileName');
+    final metadata = SettableMetadata(
+      contentType: 'application/pdf',
+      customMetadata: {
+        'department': selectedDepartment!,
+        'courseNumber': courseNumberController.text,
+        'courseName': selectedCourseName!,
+        'uploadedBy': model.user.email!,
+      },
+    );
+
+    try {
+      // Upload the file to Firebase Storage with metadata
+      await storageRef.putData(fileBytes!, metadata);
+      String downloadURL = await storageRef.getDownloadURL();
+
+      // Extract text from PDF using Syncfusion
+      final document = PdfDocument(inputBytes: fileBytes!);
+      final textExtractor = PdfTextExtractor(document);
+      String parsedText = textExtractor.extractText();
+      document.dispose();
+
+      // Store metadata and parsed text in Firestore
+      await FirebaseFirestore.instance.collection('syllabi').add({
+        'department': selectedDepartment,
+        'courseNumber': courseNumberController.text,
+        'courseName': selectedCourseName,
+        'fileName': fileName,
+        'fileURL': downloadURL,
+        'parsedText': parsedText, // Store the extracted text
+        'uploadedBy': model.user.email,
+        'uploadedAt': Timestamp.now(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Syllabus uploaded successfully!')),
+      );
+
+      // Reset form and clear state
+      setState(() {
+        selectedDepartment = null;
+        selectedCourseName = null;
+        courseNumberController.clear();
+        fileBytes = null;
+        fileName = null;
+        errorMessage = null;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to upload syllabus: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home"),
       ),
-      body: PopScope(
-        canPop: false, // Disable back button
-        child: Text(model.user.email!),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Welcome Message
+            Text(
+              'Welcome, ${model.user.email!}',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 20),
+
+            // Upload Heading
+            const Text(
+              "Upload the Syllabus PDF",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+
+            // Department Dropdown
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(labelText: 'Select Department'),
+              value: selectedDepartment,
+              items: departmentCourses.keys.map((dept) {
+                return DropdownMenuItem(
+                  value: dept,
+                  child: Text(dept),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedDepartment = value;
+                  selectedCourseName = null; // Reset course name on department change
+                });
+              },
+            ),
+            const SizedBox(height: 10),
+
+            // Course Name Dropdown (depends on selected department)
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(labelText: 'Select Course Name'),
+              value: selectedCourseName,
+              items: selectedDepartment != null
+                  ? departmentCourses[selectedDepartment]!
+                      .map((course) => DropdownMenuItem(
+                            value: course,
+                            child: Text(course),
+                          ))
+                      .toList()
+                  : [],
+              onChanged: (value) {
+                setState(() {
+                  selectedCourseName = value;
+                });
+              },
+            ),
+            const SizedBox(height: 10),
+
+            // Course Number Input
+            TextField(
+              controller: courseNumberController,
+              decoration: const InputDecoration(labelText: 'Course Number'),
+            ),
+
+            // PDF Upload Button
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: _pickPdfFile,
+                  child: const Text("Select PDF"),
+                ),
+                const SizedBox(width: 10),
+                if (fileName != null) Text("Selected: $fileName"),
+              ],
+            ),
+
+            // Error Message
+            if (errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(
+                  errorMessage!,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+
+            const SizedBox(height: 20),
+
+            // Submit Button
+            Center(
+              child: ElevatedButton(
+                onPressed: _uploadSyllabus,
+                child: const Text("Submit"),
+              ),
+            ),
+          ],
+        ),
       ),
       drawer: drawerView(context),
     );
   }
-
-
 
   Widget drawerView(BuildContext context) {
     return Drawer(
