@@ -245,7 +245,7 @@ class HomeState extends State<HomeScreen> {
       child: ListView(
         children: [
           UserAccountsDrawerHeader(
-            accountName: const Text('No profile'),
+            accountName: const Text('No profile Picture uploaded'),
             accountEmail: Text(model.user.email!),
           ),
           ListTile(
