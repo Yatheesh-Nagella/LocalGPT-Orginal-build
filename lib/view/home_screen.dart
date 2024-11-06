@@ -39,7 +39,7 @@ class HomeState extends State<HomeScreen> {
 
   // Department and course options
   final Map<String, List<String>> departmentCourses = {
-    'Computer Science': ['Data Structures', 'Algorithms', 'AI and ML', 'Cyber Security'],
+    'Computer Science': ['Data Structures', 'Software Engineering - 2', 'AI and ML', 'Mobile applications'],
     'Arts': ['Art History', 'Painting', 'Sculpture', 'Photography'],
     'Music': ['Music Theory', 'Composition', 'Instrumental Performance', 'Voice'],
     'Psychology': ['Intro to Psychology', 'Behavioral Science', 'Neuroscience', 'Cognitive Psychology']
@@ -75,6 +75,41 @@ class HomeState extends State<HomeScreen> {
       return;
     }
 
+    // Check if a syllabus already exists in Firestore for the selected course
+    final existingSyllabus = await FirebaseFirestore.instance
+        .collection('syllabi')
+        .where('department', isEqualTo: selectedDepartment)
+        .where('courseName', isEqualTo: selectedCourseName)
+        .where('courseNumber', isEqualTo: courseNumberController.text)
+        .limit(1)
+        .get();
+
+    if (existingSyllabus.docs.isNotEmpty) {
+      // Show confirmation dialog
+      bool overwrite = await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Overwrite Existing Syllabus"),
+          content: const Text("A syllabus already exists for this course. Do you want to overwrite it?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false), // Cancel
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true), // Confirm overwrite
+              child: const Text("Overwrite"),
+            ),
+          ],
+        ),
+      );
+
+      if (!overwrite) {
+        // User chose to cancel the upload
+        return;
+      }
+    }
+
     // Define storage reference and metadata
     final storageRef = FirebaseStorage.instance
         .ref()
@@ -100,17 +135,32 @@ class HomeState extends State<HomeScreen> {
       String parsedText = textExtractor.extractText();
       document.dispose();
 
-      // Store metadata and parsed text in Firestore
-      await FirebaseFirestore.instance.collection('syllabi').add({
-        'department': selectedDepartment,
-        'courseNumber': courseNumberController.text,
-        'courseName': selectedCourseName,
-        'fileName': fileName,
-        'fileURL': downloadURL,
-        'parsedText': parsedText, // Store the extracted text
-        'uploadedBy': model.user.email,
-        'uploadedAt': Timestamp.now(),
-      });
+      // If a document already exists, update it; otherwise, create a new document
+      if (existingSyllabus.docs.isNotEmpty) {
+        // Update the existing document
+        await FirebaseFirestore.instance
+            .collection('syllabi')
+            .doc(existingSyllabus.docs.first.id)
+            .update({
+          'fileName': fileName,
+          'fileURL': downloadURL,
+          'parsedText': parsedText,
+          'uploadedAt': Timestamp.now(),
+          'uploadedBy': model.user.email,
+        });
+      } else {
+        // Add a new document to Firestore
+        await FirebaseFirestore.instance.collection('syllabi').add({
+          'department': selectedDepartment,
+          'courseNumber': courseNumberController.text,
+          'courseName': selectedCourseName,
+          'fileName': fileName,
+          'fileURL': downloadURL,
+          'parsedText': parsedText, // Store the extracted text
+          'uploadedBy': model.user.email,
+          'uploadedAt': Timestamp.now(),
+        });
+      }
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Syllabus uploaded successfully!')),
