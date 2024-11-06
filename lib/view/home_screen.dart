@@ -39,10 +39,25 @@ class HomeState extends State<HomeScreen> {
 
   // Department and course options
   final Map<String, List<String>> departmentCourses = {
-    'Computer Science': ['Data Structures', 'Software Engineering - 2', 'AI and ML', 'Mobile applications'],
+    'Computer Science': [
+      'Data Structures',
+      'Software Engineering - 2',
+      'AI and ML',
+      'Mobile applications'
+    ],
     'Arts': ['Art History', 'Painting', 'Sculpture', 'Photography'],
-    'Music': ['Music Theory', 'Composition', 'Instrumental Performance', 'Voice'],
-    'Psychology': ['Intro to Psychology', 'Behavioral Science', 'Neuroscience', 'Cognitive Psychology']
+    'Music': [
+      'Music Theory',
+      'Composition',
+      'Instrumental Performance',
+      'Voice'
+    ],
+    'Psychology': [
+      'Intro to Psychology',
+      'Behavioral Science',
+      'Neuroscience',
+      'Cognitive Psychology'
+    ]
   };
 
   Future<void> _pickPdfFile() async {
@@ -90,14 +105,16 @@ class HomeState extends State<HomeScreen> {
         context: context,
         builder: (context) => AlertDialog(
           title: const Text("Overwrite Existing Syllabus"),
-          content: const Text("A syllabus already exists for this course. Do you want to overwrite it?"),
+          content: const Text(
+              "A syllabus already exists for this course. Do you want to overwrite it?"),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false), // Cancel
               child: const Text("Cancel"),
             ),
             TextButton(
-              onPressed: () => Navigator.of(context).pop(true), // Confirm overwrite
+              onPressed: () =>
+                  Navigator.of(context).pop(true), // Confirm overwrite
               child: const Text("Overwrite"),
             ),
           ],
@@ -186,7 +203,25 @@ class HomeState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Home"),
+        backgroundColor: Colors.black,
+        centerTitle: true,
+        foregroundColor: Colors.white,
+        title: const Column(
+          children: [
+            Text(
+              "Faculty Page",
+              style: TextStyle(color: Colors.white),
+            ),
+            SizedBox(height: 4),
+            Text(
+              "An LLM Integration with University Course Syllabus",
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w300,
+                  color: Colors.white),
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -220,7 +255,8 @@ class HomeState extends State<HomeScreen> {
               onChanged: (value) {
                 setState(() {
                   selectedDepartment = value;
-                  selectedCourseName = null; // Reset course name on department change
+                  selectedCourseName =
+                      null; // Reset course name on department change
                 });
               },
             ),
@@ -228,7 +264,8 @@ class HomeState extends State<HomeScreen> {
 
             // Course Name Dropdown (depends on selected department)
             DropdownButtonFormField<String>(
-              decoration: const InputDecoration(labelText: 'Select Course Name'),
+              decoration:
+                  const InputDecoration(labelText: 'Select Course Name'),
               value: selectedCourseName,
               items: selectedDepartment != null
                   ? departmentCourses[selectedDepartment]!
@@ -251,6 +288,8 @@ class HomeState extends State<HomeScreen> {
               controller: courseNumberController,
               decoration: const InputDecoration(labelText: 'Course Number'),
             ),
+
+            const SizedBox(height: 20),
 
             // PDF Upload Button
             Row(
@@ -295,7 +334,7 @@ class HomeState extends State<HomeScreen> {
       child: ListView(
         children: [
           UserAccountsDrawerHeader(
-            accountName: const Text('No profile Picture uploaded'),
+            accountName: const Text('No profile Picture!'),
             accountEmail: Text(model.user.email!),
           ),
           ListTile(
