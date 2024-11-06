@@ -201,6 +201,7 @@ class HomeState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String accountName = model.user.email!.split('@')[0];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -230,7 +231,7 @@ class HomeState extends State<HomeScreen> {
           children: [
             // Welcome Message
             Text(
-              'Welcome, ${model.user.email!}',
+              'Welcome, $accountName!',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 20),
@@ -330,18 +331,32 @@ class HomeState extends State<HomeScreen> {
   }
 
   Widget drawerView(BuildContext context) {
+    // Extract the name part before '@' from the email
+    String accountName = model.user.email!.split('@')[0];
+
     return Drawer(
       child: ListView(
         children: [
           UserAccountsDrawerHeader(
-            accountName: const Text('No profile Picture!'),
+            accountName: Text(accountName), // Display the extracted name
             accountEmail: Text(model.user.email!),
+            currentAccountPicture: const CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Icon(
+                Icons.person, // Profile icon
+                size: 40,
+                color: Colors.black54,
+              ),
+            ),
+            decoration: const BoxDecoration(
+              color: Colors.black, // Background color for the drawer header
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Sign out'),
             onTap: con.signOut,
-          )
+          ),
         ],
       ),
     );
