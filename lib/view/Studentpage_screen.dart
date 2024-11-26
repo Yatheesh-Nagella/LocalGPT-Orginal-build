@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'package:google_generative_ai/google_generative_ai.dart'; // Assuming Google Generative AI API is used
+//import 'package:google_generative_ai/google_generative_ai.dart'; // Assuming Google Generative AI API is used
+import 'dart:convert'; // For JSON encoding/decoding
+import 'package:http/http.dart' as http; // For HTTP requests
 
 class StudentpageScreen extends StatefulWidget {
   const StudentpageScreen({super.key});
@@ -71,32 +73,67 @@ class _StudentpageScreenState extends State<StudentpageScreen> {
 
   // Function to ask a question and get a response
   Future<void> _askQuestion() async {
-    final question = _searchController.text;
-    if (question.isEmpty || syllabusContent == null) return;
+  final question = _searchController.text;
+  if (question.isEmpty || syllabusContent == null) return;
 
-    final model = GenerativeModel(
-      model: 'gemini-1.5-flash-latest',
-      apiKey: 'AIzaSyCw1kt7eNZ_3x63WL2PREbPv2FgLHy50HQ', // Replace with your actual API key
+  // Construct the prompt with the syllabus content and question
+  final prompt = '''
+    Syllabus content:
+    $syllabusContent
+    
+    Student question:
+    $question
+  ''';
+
+  // Define the payload for the custom API
+  final payload = {
+    "prompt": prompt,
+    "max_tokens": 512 // Adjust token limit based on your API requirements
+  };
+
+  try {
+    // Send a POST request to the custom API
+    final response = await http.post(
+      Uri.parse("http://csai01:8000/generate/"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(payload),
     );
 
-    // Construct the prompt with the syllabus content and question
-    final prompt = '''
-      Syllabus content:
-      $syllabusContent
-      
-      Student question:
-      $question
-    ''';
+    if (response.statusCode == 200) {
+      final responseJson = jsonDecode(response.body);
 
-    final response = await model.generateContent([Content.text(prompt)]);
-
+      // Check for the response content in the API response
+      if (responseJson.containsKey('response') &&
+          responseJson['response'].containsKey('content')) {
+        setState(() {
+          conversationHistory.insert(
+              0,
+              "You: $question\nAI: ${responseJson['response']['content']}");
+          if (conversationHistory.length > 10) conversationHistory.removeLast(); // Limit history
+          _searchController.clear();
+        });
+      } else {
+        // Handle unexpected response format
+        setState(() {
+          conversationHistory.insert(
+              0, "You: $question\nAI: Unexpected response format.");
+        });
+      }
+    } else {
+      // Handle API error
+      setState(() {
+        conversationHistory.insert(
+            0, "You: $question\nAI: Request failed with status code ${response.statusCode}.");
+      });
+    }
+  } catch (e) {
+    // Handle connection or other errors
     setState(() {
       conversationHistory.insert(
-          0, "You: $question\nAI: ${response.text ?? 'No response received.'}");
-      if (conversationHistory.length > 10) conversationHistory.removeLast(); // Limit history
-      _searchController.clear();
+          0, "You: $question\nAI: Failed to connect to the server. Error: $e");
     });
   }
+}
 
   @override
   Widget build(BuildContext context) {
