@@ -9,22 +9,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:lesson6/main.dart';
+import 'package:lesson6/view/Studentpage_screen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const FirebaseTemplateApp());
+  testWidgets('Department dropdown selection updates correctly',
+      (WidgetTester tester) async {
+    // Build the widget
+    await tester.pumpWidget(const MaterialApp(
+      home: StudentpageScreen(),
+    ));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify initial state (no selected department)
+    expect(find.text('Select Department'), findsOneWidget);
+    expect(find.text('Computer Science'), findsNothing);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Open the dropdown and select a department
+    await tester.tap(find.text('Select Department'));
+    await tester.pumpAndSettle();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Tap the "Computer Science" option
+    await tester.tap(find.text('Computer Science').last);
+    await tester.pumpAndSettle();
+
+    // Verify that "Computer Science" is now displayed
+    expect(find.text('Computer Science'), findsOneWidget);
   });
 }
