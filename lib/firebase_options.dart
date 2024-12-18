@@ -46,31 +46,32 @@ class DefaultFirebaseOptions {
     }
   }
 
+  // Needs to be replaced with actual values
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAVcFeTw_NtZCtRSSI4F0uh-tUW7roHbtU',
-    appId: '1:690782193193:web:bf84a83455d6b09c79fe38',
-    messagingSenderId: '690782193193',
-    projectId: 'localgpt-fa033',
-    authDomain: 'localgpt-fa033.firebaseapp.com',
-    storageBucket: 'localgpt-fa033.appspot.com',
-    measurementId: 'G-RL51V0FVCH',
+    apiKey: 'API-KEY',
+    appId: 'Replace-app-ID',
+    messagingSenderId: 'Replace-messaging-sender-ID',
+    projectId: 'Replace-project-ID',
+    authDomain: 'Replace-auth-domain',
+    storageBucket: 'Replace-storage-bucket',
+    measurementId: 'Replace-measurement-ID',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB2UroHYx0aJi4thMumpgQ3P2O1Akh9hFI',
-    appId: '1:1084017196899:android:b0b5a9e94261424b7c1d56',
-    messagingSenderId: '1084017196899',
-    projectId: 'ynagella-cmsc5303-flutterdev',
-    storageBucket: 'ynagella-cmsc5303-flutterdev.appspot.com',
+    apiKey: 'API-KEY',
+    appId: 'Replace-app-ID',
+    messagingSenderId: 'Replace-messaging-sender-ID',
+    projectId: 'Replace-project-ID',
+    storageBucket: 'Replace-storage-bucket',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBR8_ke5hb5q50ByZNK_9x-ebjXJM4ViiM',
-    appId: '1:1084017196899:ios:69bd7490f44668dc7c1d56',
-    messagingSenderId: '1084017196899',
-    projectId: 'ynagella-cmsc5303-flutterdev',
-    storageBucket: 'ynagella-cmsc5303-flutterdev.appspot.com',
-    iosBundleId: 'edu.uco.ynagella.cmsc5303.lesson6',
+    apiKey: 'API-KEY',
+    appId: 'Replace-app-ID',
+    messagingSenderId: 'Replace-messaging-sender-ID',
+    projectId: 'Replace-project-ID',
+    storageBucket: 'Replace-storage-bucket',
+    iosBundleId: 'Replace-ios-bundle-ID',
   );
 
 }
