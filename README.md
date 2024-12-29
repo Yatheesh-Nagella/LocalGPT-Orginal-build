@@ -70,7 +70,7 @@ This project provides a web-based platform for students and professors to intera
 4. **Update Firestore Rules**:
    Ensure your Firebase rules allow public read access for testing but secure write access to authenticated users (professors).
 
-5. **Run the Application**:
+5. **Run the Application in chrome browser**:
    ```bash
    flutter run -d chrome
    ```
